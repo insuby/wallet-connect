@@ -4,6 +4,7 @@ import {useWallet, WalletProvider} from "@tronweb3/tronwallet-adapter-react-hook
 import {TronLinkAdapter, TronLinkAdapterName} from "@tronweb3/tronwallet-adapter-tronlink";
 import * as TronWeb from "tronweb/dist/TronWeb";
 import {WalletConnectAdapter, WalletConnectWalletName} from "@tronweb3/tronwallet-adapter-walletconnect";
+import {ABI} from "./tron/contract/abi";
 
 const tronWeb = new TronWeb({
     fullHost: 'https://api.nileex.io',
@@ -34,23 +35,7 @@ const tronLinkAdapter = new TronLinkAdapter()
 
 const parameter = [
     {
-        value: true,
-        type: 'bool',
-    },
-    {
         value: Date.now(),
-        type: 'uint256',
-    },
-    {
-        value: tronWeb.toBigNumber(100).toString() * 10 ** 6,
-        type: 'uint256',
-    },
-    {
-        value: tronWeb.toBigNumber(20).toString() * 10 ** 6,
-        type: 'uint256',
-    },
-    {
-        value: tronWeb.toBigNumber(2).toString() * 10 ** 6,
         type: 'uint256',
     },
     {
@@ -70,8 +55,16 @@ const parameter = [
         type: 'address',
     },
     {
-        value: [],
-        type: 'tuple[]',
+        value: tronWeb.toBigNumber(100).toString() * 10 ** 6,
+        type: 'uint256',
+    },
+    {
+        value: tronWeb.toBigNumber(20).toString() * 10 ** 6,
+        type: 'uint256',
+    },
+    {
+        value: tronWeb.toBigNumber(2).toString() * 10 ** 6,
+        type: 'uint256',
     },
     {
         value: 'terms',
@@ -105,32 +98,14 @@ const App: React.FC = () => {
         try {
             tronWeb.setAddress(address);
 
-            const deal = [
-                false,
-                Date.now(),
-                tronWeb.toBigNumber(1000),
-                tronWeb.toBigNumber(100),
-                tronWeb.toBigNumber(50),
-                tronWeb.address.toHex('TRnyDbytxz6EEXPWvag1pwY1uvm88zMfJg'),
-                tronWeb.address.toHex('TGi7C537KPDgoa1Uewd1KvrFbHdFNi8vGu'),
-                tronWeb.address.toHex('TTDFqTFHcFw3bZfXDi64rBmc2qTwNenhrT'),
-                tronWeb.address.toHex('TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj'),
-                [],
-                'terms'
-            ]
-
             const unSignedTransaction = await tronWeb.transactionBuilder.triggerSmartContract(
-                tronWeb.address.toHex('TLX7Kon9TPP9SdKMm249o9VJ6F1aAriNZw'),
-                'createDeal((bool,uint256,uint256,uint256,uint256,address,address,address,address,(address,uint256)[],string))',
+                tronWeb.address.toHex('TBWG31zvPFRvX83PHREU117oeeVyAK2Wqv'),
+                'createDeal(uint256,address,address,address,address,uint256,uint256,uint256,string)',
                 {
                     feeLimit: 300_000_000,
                     callValue: 0
                 },
                 parameter,
-                // [{
-                //     type: 'tuple',
-                //     value: deal
-                // }],
                 tronWeb.address.toHex(address),
             )
 
