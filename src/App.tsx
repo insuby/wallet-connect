@@ -4,8 +4,6 @@ import {useWallet, WalletProvider} from "@tronweb3/tronwallet-adapter-react-hook
 import {TronLinkAdapter, TronLinkAdapterName} from "@tronweb3/tronwallet-adapter-tronlink";
 import * as TronWeb from "tronweb/dist/TronWeb";
 import {WalletConnectAdapter, WalletConnectWalletName} from "@tronweb3/tronwallet-adapter-walletconnect";
-import {TOKEN_ABI} from "./tron/contract/tokenAbi";
-import {ABI} from "./tron/contract/abi";
 
 const tronWeb = new TronWeb({
     fullHost: 'https://api.nileex.io',
@@ -34,13 +32,56 @@ const walletConnectAdapter = new WalletConnectAdapter({
 
 const tronLinkAdapter = new TronLinkAdapter()
 
-const convertToHex = (address: any) => {
-    return tronWeb.address.toHex(address).replace(/^41/, '0x');
-};
+const parameter = [
+    {
+        value: true,
+        type: 'bool',
+    },
+    {
+        value: Date.now(),
+        type: 'uint256',
+    },
+    {
+        value: tronWeb.toBigNumber(100).toString() * 10 ** 6,
+        type: 'uint256',
+    },
+    {
+        value: tronWeb.toBigNumber(20).toString() * 10 ** 6,
+        type: 'uint256',
+    },
+    {
+        value: tronWeb.toBigNumber(2).toString() * 10 ** 6,
+        type: 'uint256',
+    },
+    {
+        value: tronWeb.address.toHex('TRnyDbytxz6EEXPWvag1pwY1uvm88zMfJg'),
+        type: 'address',
+    },
+    {
+        value: tronWeb.address.toHex('TGi7C537KPDgoa1Uewd1KvrFbHdFNi8vGu'),
+        type: 'address',
+    },
+    {
+        value: tronWeb.address.toHex('TTDFqTFHcFw3bZfXDi64rBmc2qTwNenhrT'),
+        type: 'address',
+    },
+    {
+        value: tronWeb.address.toHex('TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj'),
+        type: 'address',
+    },
+    {
+        value: [],
+        type: 'tuple[]',
+    },
+    {
+        value: 'terms',
+        type: 'string',
+    },
+]
 
 const App: React.FC = () => {
-    const [signature, setSignature] = React.useState<string>("");
-    const {wallet, address, connected, select, connect, disconnect, signMessage, signTransaction} = useWallet();
+    const [signature, setSignature] = React.useState("");
+    const {address, select, connect, signTransaction} = useWallet();
 
     const connectWalletConnectHandler = async () => {
         try {
@@ -63,81 +104,39 @@ const App: React.FC = () => {
     const signMessageHandler = async () => {
         try {
             tronWeb.setAddress(address);
-            //
-            // const parameter = [
-            //     {
-            //         value: true,
-            //         type: 'bool',
-            //     },
-            //     {
-            //         value: Date.now(),
-            //         type: 'uint256',
-            //     },
-            //     {
-            //         value: tronWeb.toBigNumber(100).toString() * 10 ** 6,
-            //         type: 'uint256',
-            //     },
-            //     {
-            //         value: tronWeb.toBigNumber(20).toString() * 10 ** 6,
-            //         type: 'uint256',
-            //     },
-            //     {
-            //         value: tronWeb.toBigNumber(2).toString() * 10 ** 6,
-            //         type: 'uint256',
-            //     },
-            //     {
-            //         value: tronWeb.address.toHex('TRnyDbytxz6EEXPWvag1pwY1uvm88zMfJg'),
-            //         type: 'address',
-            //     },
-            //     {
-            //         value: tronWeb.address.toHex('TGi7C537KPDgoa1Uewd1KvrFbHdFNi8vGu'),
-            //         type: 'address',
-            //     },
-            //     {
-            //         value: tronWeb.address.toHex('TTDFqTFHcFw3bZfXDi64rBmc2qTwNenhrT'),
-            //         type: 'address',
-            //     },
-            //     {
-            //         value: tronWeb.address.toHex('TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj'),
-            //         type: 'address',
-            //     },
-            //     {
-            //         value: 'terms',
-            //         type: 'string',
-            //     },
-            // ]
-            //
-            // const unSignedTransaction = await tronWeb.transactionBuilder.triggerSmartContract(
-            //     tronWeb.address.toHex('TLX7Kon9TPP9SdKMm249o9VJ6F1aAriNZw'),
-            //     "createDeal",
-            //     {callValue: 0},
-            //     parameter,
-            //     tronWeb.address.toHex(address),
-            // );
-            //
-            // console.log(tronWeb.contract(ABI, 'TLX7Kon9TPP9SdKMm249o9VJ6F1aAriNZw'))
-            //
-            // const signedTransaction = await tronLinkAdapter.signTransaction(unSignedTransaction.transaction);
-            // const result = await tronWeb.trx.sendRawTransaction(signedTransaction);
-            // // console.log(result)
-            // // setSignature(signedTransaction.signature[0]);
 
-            const parameter = [
-                {type: 'address', value: 'TLX7Kon9TPP9SdKMm249o9VJ6F1aAriNZw'},
-                {type: 'uint256', value: 1000000000}
+            const deal = [
+                false,
+                Date.now(),
+                tronWeb.toBigNumber(1000),
+                tronWeb.toBigNumber(100),
+                tronWeb.toBigNumber(50),
+                tronWeb.address.toHex('TRnyDbytxz6EEXPWvag1pwY1uvm88zMfJg'),
+                tronWeb.address.toHex('TGi7C537KPDgoa1Uewd1KvrFbHdFNi8vGu'),
+                tronWeb.address.toHex('TTDFqTFHcFw3bZfXDi64rBmc2qTwNenhrT'),
+                tronWeb.address.toHex('TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj'),
+                [],
+                'terms'
             ]
+
             const unSignedTransaction = await tronWeb.transactionBuilder.triggerSmartContract(
-                tronWeb.address.toHex('TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'),
-                "transfer(address,uint256)",
-                // "approve(address,uint256)",
-                { callValue: 0 },
+                tronWeb.address.toHex('TLX7Kon9TPP9SdKMm249o9VJ6F1aAriNZw'),
+                'createDeal((bool,uint256,uint256,uint256,uint256,address,address,address,address,(address,uint256)[],string))',
+                {
+                    feeLimit: 300_000_000,
+                    callValue: 0
+                },
                 parameter,
+                // [{
+                //     type: 'tuple',
+                //     value: deal
+                // }],
                 tronWeb.address.toHex(address),
-            );
-            const signedTransaction = await walletConnectAdapter.signTransaction(unSignedTransaction.transaction);
+            )
 
+            const signedTransaction = await tronLinkAdapter.signTransaction(unSignedTransaction.transaction);
             const result = await tronWeb.trx.sendRawTransaction(signedTransaction);
-
+            setSignature(signedTransaction.signature[0]);
         } catch (error) {
             console.log("signTransaction:" + error);
         }
@@ -154,32 +153,11 @@ const App: React.FC = () => {
     );
 };
 
-const onError = (error: any) => {
-    console.log("onError:" + error);
-};
-
 export default () => (
     <WalletProvider
         adapters={[walletConnectAdapter, tronLinkAdapter]}
+        onError={console.log}
     >
         <App/>
     </WalletProvider>
 );
-
-
-//
-// const newDeal = {
-//     isSellerRequest: true,
-//     dealId: 1,
-//     amount: 1000000000, // Example amount, adjust as needed
-//     disputeFee: 10000000, // Example dispute fee, adjust as needed
-//     successFee: 5000000, // Example success fee, adjust as needed
-//     buyer: convertToHex('TRnyDbytxz6EEXPWvag1pwY1uvm88zMfJg'), // Example buyer address, replace with actual
-//     seller: convertToHex('TGi7C537KPDgoa1Uewd1KvrFbHdFNi8vGu'), // Example seller address, replace with actual
-//     garant: convertToHex('TTDFqTFHcFw3bZfXDi64rBmc2qTwNenhrT'), // Example garant address, replace with actual
-//     token: convertToHex('TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj'), // Example token address, replace with actual
-//     agents: [
-//         { agent: convertToHex('TRnyDbytxz6EEXPWvag1pwY1uvm88zMfJg'), fee: 1000000 } // Example agent and fee, adjust as needed
-//     ],
-//     terms: 'Example deal terms' // Example terms, replace with actual
-// };
